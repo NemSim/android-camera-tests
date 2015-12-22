@@ -25,8 +25,8 @@ public class MainActivity extends AppCompatActivity {
     public static final int MEDIA_TYPE_IMAGE = 1;
     public static final int MEDIA_TYPE_VIDEO = 2;
 
-    private Camera mCamera;
-    private CameraPreview mPreview;
+    private Camera mCamera = null;
+    private CameraPreview mPreview = null;
     private FrameLayout preview;
     private Button captureButton;
 
@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
-        clearStuff();
+//        clearStuff();
         super.onPause();
     }
 

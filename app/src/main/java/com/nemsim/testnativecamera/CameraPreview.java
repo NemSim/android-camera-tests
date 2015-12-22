@@ -43,6 +43,8 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
     public void surfaceDestroyed(SurfaceHolder holder) {
         // empty. Take care of releasing the Camera preview in your activity.
+        mCamera.stopPreview();
+        mCamera.release();
     }
 
     public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
@@ -66,7 +68,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 //        int height = mCamera.getParameters().getSupportedPreviewSizes().get(0).height;
 //        int width = mCamera.getParameters().getSupportedPreviewSizes().get(0).width;
 //        mCamera.getParameters().setPreviewSize(width, height);
-        mCamera.getParameters().setPreviewSize(100, 100);
+//        mCamera.getParameters().setPreviewSize(100, 100);
 
 
         // start preview with new settings
