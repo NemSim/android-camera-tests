@@ -56,19 +56,30 @@ public class MainActivity extends AppCompatActivity {
 
         mCamera = getCameraInstance();
 
-        mPreview = new CameraPreview(this, mCamera);
-        FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
-        preview.addView(mPreview);
-
         Button captureButton = (Button) findViewById(R.id.button_capture);
-        captureButton.setOnClickListener(new View.OnClickListener(){
+        captureButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mCamera.takePicture(null, null, mPicture);
-
-                mCamera.release();
             }
         });
+
+        mPreview = new CameraPreview(this, mCamera);
+        FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
+        preview.addView(mPreview);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (mCamera != null) {
+            mCamera.release();
+        }
+        super.onDestroy();
     }
 
     public static Camera getCameraInstance() {
