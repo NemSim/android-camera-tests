@@ -60,10 +60,7 @@ public class MainActivity extends AppCompatActivity {
 
         captureButton = (Button) findViewById(R.id.button_capture);
         preview = (FrameLayout) findViewById(R.id.camera_preview);
-    }
 
-    @Override
-    protected void onResume() {
         mCamera = getCameraInstance();
         if (mCamera == null) {
             throw new RuntimeException("NO FUCKING CAMERA");
@@ -78,14 +75,6 @@ public class MainActivity extends AppCompatActivity {
                 mCamera.takePicture(null, null, mPicture);
             }
         });
-
-        super.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-//        clearStuff();
-        super.onPause();
     }
 
     private void clearStuff() {

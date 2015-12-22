@@ -2,4 +2,7 @@
 
 An experimental app to figure out what all the interactions around the Android Camera API are required to allow an application to natively take and save pictures.
 
-Currently doesn't work on the Nexus 6 but works on the Note 2.
+Currently doesn't work on the Nexus 6 but works on the Note 2 (3? I don't know).
+
+## issues
+- [ ] launching, going home, then launching again crash it on Note
