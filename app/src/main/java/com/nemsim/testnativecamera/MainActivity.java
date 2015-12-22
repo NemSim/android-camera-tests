@@ -27,6 +27,8 @@ public class MainActivity extends AppCompatActivity {
 
     private Camera mCamera;
     private CameraPreview mPreview;
+    private FrameLayout preview;
+    private Button captureButton;
 
     private Camera.PictureCallback mPicture = new Camera.PictureCallback() {
         @Override
@@ -54,32 +56,43 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mCamera = getCameraInstance();
+        captureButton = (Button) findViewById(R.id.button_capture);
+        preview = (FrameLayout) findViewById(R.id.camera_preview);
+    }
 
-        Button captureButton = (Button) findViewById(R.id.button_capture);
+    @Override
+    protected void onResume() {
+        super.onResume();
+        clearStuff();
+
+        mCamera = getCameraInstance();
+        mPreview = new CameraPreview(this, mCamera);
+
+        preview.addView(mPreview);
+
         captureButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mCamera.takePicture(null, null, mPicture);
             }
         });
-
-        mPreview = new CameraPreview(this, mCamera);
-        FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
-        preview.addView(mPreview);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        clearStuff();
     }
 
-    @Override
-    protected void onDestroy() {
+    private void clearStuff() {
         if (mCamera != null) {
             mCamera.release();
+            mCamera = null;
         }
-        super.onDestroy();
+        if (preview != null && mPreview != null) {
+            preview.removeView(mPreview);
+            mPreview = null;
+        }
     }
 
     public static Camera getCameraInstance() {
