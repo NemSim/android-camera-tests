@@ -1,0 +1,9 @@
+build/
+.idea/
+.gradle
+local.properties
+.DS_Store
+*.iml
+*.swp
+logcat.txt
+captures/
