@@ -54,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        clearStuff();
+
         setContentView(R.layout.activity_main);
 
         captureButton = (Button) findViewById(R.id.button_capture);
@@ -62,10 +64,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-        super.onResume();
-        clearStuff();
-
         mCamera = getCameraInstance();
+        if (mCamera == null) {
+            throw new RuntimeException("NO FUCKING CAMERA");
+        }
         mPreview = new CameraPreview(this, mCamera);
 
         preview.addView(mPreview);
@@ -76,12 +78,14 @@ public class MainActivity extends AppCompatActivity {
                 mCamera.takePicture(null, null, mPicture);
             }
         });
+
+        super.onResume();
     }
 
     @Override
     protected void onPause() {
-        super.onPause();
         clearStuff();
+        super.onPause();
     }
 
     private void clearStuff() {
@@ -101,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
             c = Camera.open();
         } catch (Exception e){
             // Toast.makeText(this.getApplicationContext(), "Can't get camera", Toast.LENGTH_LONG).show();
+            e.printStackTrace();
         }
 
         return c;
