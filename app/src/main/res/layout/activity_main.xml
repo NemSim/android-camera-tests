@@ -7,8 +7,14 @@
     android:padding="@dimen/activity_vertical_margin"
     tools:context="com.nemsim.testnativecamera.MainActivity">
 
-    <FrameLayout
-        android:id="@+id/camera_preview"
+    <!--<FrameLayout-->
+        <!--android:id="@+id/camera_preview"-->
+        <!--android:layout_width="fill_parent"-->
+        <!--android:layout_height="fill_parent"-->
+        <!--android:layout_weight="1"/>-->
+
+    <SurfaceView
+        android:id="@+id/camera_preview_surface"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_weight="1"/>
