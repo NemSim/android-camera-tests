@@ -1,15 +1,22 @@
 package com.nemsim.testnativecamera;
 
+import android.graphics.Point;
 import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.Toast;
+
+import com.ragnarok.rxcamera.RxCamera;
+import com.ragnarok.rxcamera.RxCameraData;
+import com.ragnarok.rxcamera.config.RxCameraConfig;
+import com.ragnarok.rxcamera.config.RxCameraConfigChooser;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -17,6 +24,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import rx.Observable;
+import rx.functions.Func1;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
     private CameraPreview mPreview = null;
     private FrameLayout preview;
     private Button captureButton;
+
+    private SurfaceView surfaceView;
 
     private Camera.PictureCallback mPicture = new Camera.PictureCallback() {
         @Override
@@ -54,28 +66,58 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        clearStuff();
 
         setContentView(R.layout.activity_main);
 
+        surfaceView = (SurfaceView) findViewById(R.id.camera_preview_surface);
         captureButton = (Button) findViewById(R.id.button_capture);
-        preview = (FrameLayout) findViewById(R.id.camera_preview);
 
-        mCamera = getCameraInstance();
-        if (mCamera == null) {
-            throw new RuntimeException("NO FUCKING CAMERA");
-        }
-        mPreview = new CameraPreview(this, mCamera);
+        RxCameraConfig config = RxCameraConfigChooser.obtain().
+                useBackCamera().
+                setAutoFocus(true).
+                setPreferPreviewFrameRate(15,30).
+                setPreferPreviewSize(new Point(640, 480)).
+                setHandleSurfaceEvent(true).
+                get();
 
-        preview.addView(mPreview);
-
-        captureButton.setOnClickListener(new View.OnClickListener() {
+        RxCamera.open(getApplicationContext(), config).flatMap(new Func1<RxCamera, Observable<RxCamera>>() {
             @Override
-            public void onClick(View v) {
-                mCamera.takePicture(null, null, mPicture);
+            public Observable<RxCamera> call(RxCamera rxCamera) {
+                return rxCamera.bindSurface(surfaceView);
+            }
+        }).flatMap(new Func1<RxCamera, Observable<RxCamera>>() {
+            @Override
+            public Observable<RxCamera> call(RxCamera rxCamera) {
+                return rxCamera.startPreview();
             }
         });
     }
+
+    //    @Override
+//    protected void onCreate(Bundle savedInstanceState) {
+//        super.onCreate(savedInstanceState);
+//        clearStuff();
+//
+//        setContentView(R.layout.activity_main);
+//
+//        captureButton = (Button) findViewById(R.id.button_capture);
+//        preview = (FrameLayout) findViewById(R.id.camera_preview);
+//
+//        mCamera = getCameraInstance();
+//        if (mCamera == null) {
+//            throw new RuntimeException("NO FUCKING CAMERA");
+//        }
+//        mPreview = new CameraPreview(this, mCamera);
+//
+//        preview.addView(mPreview);
+//
+//        captureButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                mCamera.takePicture(null, null, mPicture);
+//            }
+//        });
+//    }
 
     private void clearStuff() {
         if (mCamera != null) {
@@ -92,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
         Camera c = null;
         try {
             c = Camera.open();
-        } catch (Exception e){
+        } catch (Exception e) {
             // Toast.makeText(this.getApplicationContext(), "Can't get camera", Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }
